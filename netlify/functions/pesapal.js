@@ -1,7 +1,6 @@
 const axios = require('axios');
 
 exports.handler = async (event) => {
-  // Switched to Live Production URL
   const BASE_URL = "https://pay.pesapal.com/v3/api";
   const AUTH_URL = `${BASE_URL}/Auth/RequestToken`;
   const IPN_REG_URL = `${BASE_URL}/URLSetup/RegisterIPN`;
@@ -10,11 +9,23 @@ exports.handler = async (event) => {
   const consumerKey = process.env.PESAPAL_CONSUMER_KEY;
   const consumerSecret = process.env.PESAPAL_CONSUMER_SECRET;
 
+  // 🛑 SAFETY CHECK: Ensure keys are actually being loaded by Netlify
+  if (!consumerKey || !consumerSecret) {
+    return {
+      statusCode: 400,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        status: "Setup Error",
+        message: "Your PesaPal keys are completely missing from your Netlify Environment Variables! Go to Netlify -> Site configuration -> Environment variables to add them."
+      }, null, 2),
+    };
+  }
+
   try {
     // --- STEP A: AUTHENTICATION ---
     const authResponse = await axios.post(AUTH_URL, {
-      consumer_key: consumerKey,
-      consumer_secret: consumerSecret
+      consumer_key: consumerKey.trim(), // trims accidental spaces
+      consumer_secret: consumerSecret.trim()
     }, {
       headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' }
     });
