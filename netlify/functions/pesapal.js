@@ -1,7 +1,8 @@
 const axios = require('axios');
 
 exports.handler = async (event) => {
-  const BASE_URL = "https://cybqa.pesapal.com/pesapalv3/api";
+  // Switched to Live Production URL
+  const BASE_URL = "https://pay.pesapal.com/v3/api";
   const AUTH_URL = `${BASE_URL}/Auth/RequestToken`;
   const IPN_REG_URL = `${BASE_URL}/URLSetup/RegisterIPN`;
   const ORDER_URL = `${BASE_URL}/Transactions/SubmitOrderRequest`;
@@ -42,7 +43,7 @@ exports.handler = async (event) => {
       id: "ORDER_" + Math.floor(Math.random() * 1000000),
       currency: "KES",
       amount: 100.00,
-      description: "Test Payment Integration",
+      description: "Live Payment Integration Test",
       callback_url: myIpnUrl,
       notification_id: ipnId,
       billing_address: {
@@ -66,7 +67,7 @@ exports.handler = async (event) => {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        status: "Success! PesaPal API pipeline functional.",
+        status: "Success! PesaPal LIVE API pipeline functional.",
         ipn_registered_url: myIpnUrl,
         ipn_id: ipnId,
         checkout_redirect_url: orderResponse.data.redirect_url,
